@@ -1,0 +1,12 @@
+<div>
+    <h1 class="h3 mb-3 font-weight-normal">Register</h1>
+    {{ form_start(form, {'action': path('REGISTER_USER')}) }}
+    <label for="login">Email</label>
+    {{ form_widget(form.email) }}
+    <label for="password">Hasło</label>
+    {{ form_widget(form.password) }}
+    <br>
+    <br>
+    {{ form_widget(form.submit) }}
+    {{ form_end(form) }}
+</div>

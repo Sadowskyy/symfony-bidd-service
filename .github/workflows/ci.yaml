@@ -1,0 +1,48 @@
+on: "pull_request"
+jobs:
+  build:
+    name: Docker build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Pull images
+        run: docker compose pull
+      - name: Start services
+        run: docker compose up --build -d
+      - name: Wait for services
+        run: |
+          while status="$(docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" "$(docker compose ps -q php)")"; do
+            case $status in
+              starting) sleep 1;;
+              healthy) exit 0;;
+              unhealthy) exit 1;;
+            esac
+          done
+          exit 1
+      - name: Check HTTP reachability
+        run: curl http://localhost
+      - name: Check HTTPS reachability
+        run: curl -k https://localhost
+  tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+      - name: Restore composer cache
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+      - run: composer install --no-interaction --no-ansi --optimize-autoloader --no-progress --prefer-dist
+      - run: cat dev/mysql/*.sql > dev/mysql_dump.sql
+      - run: sudo systemctl start mysql.service
+      - run: mysql -uroot -proot  < dev/mysql_dump.sql
+      - run: bin/phpunit -d memory_limit=512M --coverage-clover=build/coverage.xml
+      - uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./build/coverage.xml
+          verbose: true

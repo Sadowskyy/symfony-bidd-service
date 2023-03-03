@@ -1,0 +1,6 @@
+parameters:
+    excludePaths:
+        - tests/*
+        - src/SharedKernel/Framework/Command/Development/TestDbInitCommand.php
+    ignoreErrors:
+#soon maybe something here will be

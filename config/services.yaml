@@ -1,0 +1,36 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+#    Framework\ExceptionSubscriber:
+#        tags:
+#            - { name: kernel.event_listener, event: kernel.exception }
+
+    SharedKernel\Framework\Command\Development\TestDbInitCommand:
+        arguments:
+            $container: '@service_container'
+    SharedKernel\Framework\Security\Provider\UserByEmailProvider: ~
+
+    Framework\Controller\Security\LoginController:
+        tags: [ 'controller.service_arguments' ]
+
+    Framework\Controller\MainPageController:
+        tags: [ 'controller.service_arguments' ]
+
+    Framework\Controller\Health\HealthzController:
+        tags: [ 'controller.service_arguments' ]
+
+    Framework\Controller\User\SignUpController:
+        tags: [ 'controller.service_arguments' ]
+
+    Framework\Controller\Security\AuthController:
+        tags: [ 'controller.service_arguments' ]
+
+    Symfony\Component\Security\Http\Authentication\AuthenticationUtils:
+        class: Symfony\Component\Security\Http\Authentication\AuthenticationUtils
+
+    Application\Service\SignUpService: ~
+
+    Domain\WriteModel\UserRepository:
+        class: Infrastructure\Persistence\Doctrine\Orm\DoctrineUserRepository
