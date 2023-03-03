@@ -34,7 +34,7 @@ CREATE TABLE `auctions` (
     `id`    int(10) NOT NULL AUTO_INCREMENT,
     `uuid`  varchar(36) CHARACTER SET utf8  NOT NULL,
     `title` VARCHAR(255) NOT NULL,
-    `description` TEXT NOT NULL,
+    `description` VARCHAR(255) NOT NULL,
     `created_at` datetime NOT NULL,
     `updated_at` datetime NOT NULL,
     `start_time` datetime NOT NULL,
@@ -44,6 +44,7 @@ CREATE TABLE `auctions` (
     `seller_id` INT NOT NULL,
     `winner_id` INT,
     `status` VARCHAR(10) NOT NULL,
+    PRIMARY KEY (`id`),
     CONSTRAINT fk_auctions_sellers FOREIGN KEY (seller_id) REFERENCES users(id),
     CONSTRAINT fk_auctions_winners FOREIGN KEY (winner_id) REFERENCES users(id)
 );
